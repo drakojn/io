@@ -1,11 +1,11 @@
 <?php
 namespace Drakojn\Io\Driver;
 
-use Drakojn\Io\AdapterInterface;
+use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
 use \Pdo as PHPDataObject;
 
-class Pdo implements AdapterInterface
+class Pdo implements DriverInterface
 {
     protected $resource;
 
@@ -24,7 +24,7 @@ class Pdo implements AdapterInterface
     {
         $map = $mapper->getMap();
         $selectFields = [];
-        foreach($map as $alias => $field){
+        foreach($map->getProperties() as $alias => $field){
             $selectFields[] = "{$field} as `{$alias}`";
         }
         $select = 'SELECT '.implode(', ',$selectFields);
@@ -32,19 +32,22 @@ class Pdo implements AdapterInterface
         $whereParameters = [];
         $fields = array_keys($query);
         foreach($fields as $field){
-            $whereParameters[] = "{$field} => :{$field}";
+            $whereParameters[] = "{$field} = :{$field}";
         }
         $where = '';
         if($whereParameters){
-            $where = 'WHERE '.implode(' AND '.$whereParameters);
+            $where = 'WHERE '.implode(' AND ', $whereParameters);
         }
         $sql = implode(' ',[$select, $from, $where]);
-        $statement = $this->resource->query($sql);
+        $statement = $this->resource->prepare($sql);
+        if(!$statement){
+            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
+        }
         $statement->setFetchMode(PHPDataObject::FETCH_CLASS, $map->getLocalName());
         foreach($query as $field => $value){
             $statement->bindValue($field, $value);
         }
-        $statement->execute();
+        $ok = $statement->execute();
         return $statement;
     }
 

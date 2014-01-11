@@ -2,25 +2,25 @@
 namespace Drakojn\Io;
 
 use Drakojn\Io\Mapper\Map;
-use Drakojn\Io\AdapterInterface as Adapter;
+use Drakojn\Io\DriverInterface as Driver;
 
 class Mapper
 {
-    protected $adapter;
+    protected $driver;
     protected $map;
 
-    public function __construct(Adapter $adapter, Map $map)
+    public function __construct(Driver $driver, Map $map)
     {
-        $this->adapter = $adapter;
+        $this->driver = $driver;
         $this->map = $map;
     }
 
     /**
      * @return mixed
      */
-    public function getAdapter()
+    public function getDriver()
     {
-        return $this->adapter;
+        return $this->driver;
     }
 
     /**
@@ -33,30 +33,30 @@ class Mapper
 
     public function find(array $query = [])
     {
-        return $this->adapter->find($this, $query);
+        return $this->driver->find($this, $query);
     }
 
     public function findAll()
     {
-        return $this->adapter->find($this, []);
+        return $this->driver->find($this, []);
     }
 
     public function findByIdentifier($identifierQuery)
     {
         $identifier = $this->map->getIdentifier();
-        return $this->adapter->find($this, [$identifier => $identifierQuery]);
+        return $this->driver->find($this, [$identifier => $identifierQuery]);
     }
 
     public function save($object)
     {
         $this->checkForTraitUsage($object);
-        return $this->adapter->save($this, $object);
+        return $this->driver->save($this, $object);
     }
 
     public function delete($object)
     {
         $this->checkForTraitUsage($object);
-        return $this->adapter->delete($this, $object);
+        return $this->driver->delete($this, $object);
     }
 
     protected function checkForTraitUsage($object)

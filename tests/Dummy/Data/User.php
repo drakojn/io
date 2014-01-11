@@ -1,5 +1,5 @@
 <?php
-namespace Duummy\Data;
+namespace Dummy\Data;
 
 use Drakojn\Io\DataTrait;
 
@@ -14,14 +14,6 @@ class User
     protected $name;
 
     protected $email;
-
-    function __construct($id, $alias, $name, $email)
-    {
-        $this->id    = $id;
-        $this->alias = $alias;
-        $this->name  = $name;
-        $this->email = $email;
-    }
 
     /**
      * @param mixed $id

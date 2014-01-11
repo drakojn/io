@@ -1,7 +1,7 @@
 <?php
 namespace Drakojn\Io;
 
-interface AdapterInterface
+interface DriverInterface
 {
     public function find(Mapper $mapper, array $query = []);
 
