@@ -19,7 +19,6 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     protected function buildDB()
     {
         $pdo = new PHPDataObject('sqlite::memory:');
-        //$pdo = new PHPDataObject('sqlite:/tmp/db');
         $pdo->query("
             CREATE TABLE IF NOT EXISTS user(
               id_user INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

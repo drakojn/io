@@ -44,7 +44,7 @@ class Mapper
     public function findByIdentifier($identifierQuery)
     {
         $identifier = $this->map->getIdentifier();
-        return $this->driver->find($this, [$identifier => $identifierQuery]);
+        return current($this->driver->find($this, [$identifier => $identifierQuery]));
     }
 
     public function save($object)
