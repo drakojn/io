@@ -4,7 +4,6 @@ date_default_timezone_set('UTC');
 $map = [
   'Drakojn\\Io\\DriverInterface' => 'library/Drakojn/Io/DriverInterface.php',
   'Drakojn\\Io\\Mapper' => 'library/Drakojn/Io/Mapper.php',
-  'Drakojn\\Io\\DataTrait' => 'library/Drakojn/Io/DataTrait.php',
   'Drakojn\\Io\\Mapper\Map' => 'library/Drakojn/Io/Mapper/Map.php',
   'Drakojn\\Io\\Driver\Pdo' => 'library/Drakojn/Io/Driver/Pdo.php',
   'Drakojn\\Io\\Mapper\MapTest' => 'tests/Drakojn/Io/Mapper/MapTest.php',

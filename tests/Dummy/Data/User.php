@@ -1,12 +1,8 @@
 <?php
 namespace Dummy\Data;
 
-use Drakojn\Io\DataTrait;
-
 class User
 {
-    use DataTrait;
-
     protected $id;
 
     protected $alias;

@@ -1,7 +1,6 @@
 <?php
 namespace Drakojn\Io\Driver;
 
-use ___PHPSTORM_HELPERS\object;
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
 use \Pdo as PHPDataObject;
@@ -55,7 +54,7 @@ class Pdo implements DriverInterface
     public function save(Mapper $mapper, $object)
     {
         $identifier = $mapper->getMap()->getIdentifier();
-        $data = $object->getDataArray($mapper->getMap());
+        $data = $mapper->getMap()->getData($object);
         if($data[$identifier]){
             return $this->update($mapper, $object, $data);
         }
@@ -125,7 +124,7 @@ class Pdo implements DriverInterface
         $map = $mapper->getMap();
         $identifier = $map->getIdentifier();
         $remoteIdentifier = $map->getProperties()[$identifier];
-        $data = $object->getDataArray($mapper->getMap());
+        $data = $map->getData($object);
         $delete = 'DELETE FROM '.$map->getRemoteName();
         $where = 'WHERE '.$remoteIdentifier.' = :'.$identifier;
         $sql = "{$delete} {$where}";

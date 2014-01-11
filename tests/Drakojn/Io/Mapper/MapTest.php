@@ -9,6 +9,8 @@
 namespace Drakojn\Io\Mapper;
 
 
+use Dummy\Data\User;
+
 class MapTest extends \PHPUnit_Framework_TestCase {
     /**
      * @var Map
@@ -98,6 +100,32 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('array',$this->object->getProperties());
         $this->assertArrayHasKey('id',$this->object->getProperties());
         $this->assertArrayNotHasKey('password',$this->object->getProperties());
+    }
+
+    public function testGetData()
+    {
+        $object = new User;
+        $object->setId(3);
+        $object->setAlias('the-doctor');
+        $object->setName('Tenth');
+        $object->setEmail('tenth@tardis.gal');
+        $data = [
+            'id' => 3,
+            'alias' => 'the-doctor',
+            'name' => 'Tenth',
+            'email' => 'tenth@tardis.gal'
+        ];
+        $this->assertInternalType('array',$this->object->getData($object));
+        $this->assertSame($data, $this->object->getData($object));
+    }
+
+    public function testValidateObject()
+    {
+        $obj1 = new User;
+        $obj2 = (object)['id'=>7,'alias'=>'xpto','name'=>'Xpto da Silva','email'=>'x@p.to'];
+        $this->assertInternalType('boolean',$this->object->validateObject($obj1));
+        $this->assertTrue($this->object->validateObject($obj1));
+        $this->assertFalse($this->object->validateObject($obj2));
     }
 }
  

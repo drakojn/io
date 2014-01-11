@@ -1,6 +1,8 @@
 <?php
 namespace Drakojn\Io\Mapper;
 
+use Psr\Log\InvalidArgumentException;
+
 class Map
 {
     protected $localName;
@@ -86,4 +88,36 @@ class Map
         return $this->properties;
     }
 
+    /**
+     * Extract values from a given object
+     * @param object $object
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function getData($object)
+    {
+        if(!$this->validateObject($object)){
+            throw new \InvalidArgumentException(
+                "Given object isn\'t instance of {$this->localName}"
+            );
+        }
+        $reflection = new \ReflectionObject($object);
+        $data = [];
+        foreach(array_keys($this->properties) as $localProperty){
+            $property = $reflection->getProperty($localProperty);
+            $property->setAccessible(true);
+            $data[$localProperty] = $property->getValue($object);
+        }
+        return $data;
+    }
+
+    /**
+     * Checks if given object is an instance of Map's set
+     * @param object $object
+     * @return bool
+     */
+    public function validateObject($object)
+    {
+        return is_a($object, $this->localName);
+    }
 }
