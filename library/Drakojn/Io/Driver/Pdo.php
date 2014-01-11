@@ -44,7 +44,7 @@ class Pdo implements AdapterInterface
         foreach($query as $field => $value){
             $statement->bindValue($field, $value);
         }
-        $success = $statement->execute();
+        $statement->execute();
         return $statement;
     }
 

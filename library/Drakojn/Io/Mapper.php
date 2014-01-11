@@ -4,7 +4,7 @@ namespace Drakojn\Io;
 use Drakojn\Io\Mapper\Map;
 use Drakojn\Io\AdapterInterface as Adapter;
 
-abstract class Mapper
+class Mapper
 {
     protected $adapter;
     protected $map;

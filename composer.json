@@ -9,12 +9,6 @@
             "Drakojn\\Io\\":"library/"
         }
     },
-    "require-dev":{
-        "phpunit/phpunit": "3.7.*",
-        "phpunit/php-code-coverage":"*",
-        "phpunit/phpunit-mock-objects":"*",
-        "phpunit/phpunit-story":"*"
-    },
     "authors": [
         {
             "name": "Anderson 'Duodraco' Casimiro",

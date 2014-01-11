@@ -1,7 +1,7 @@
 <?php
 namespace Drakojn\Io\Mapper;
 
-abstract class Map
+class Map
 {
     protected $localName;
     protected $remoteName;
@@ -85,6 +85,5 @@ abstract class Map
     {
         return $this->properties;
     }
-
 
 }

@@ -14,7 +14,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase {
 
     public function testGetAdapter()
     {
-        $this->markTestIncomplete();
+
     }
 }
  
