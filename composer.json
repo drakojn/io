@@ -1,6 +1,7 @@
 {
     "name": "drakojn/io",
     "type": "library",
+    "version": "0.0.1",
     "description": "Simple Data Mapper library aiming reach any source",
     "minimum-stability": "stable",
     "license": "mit",
