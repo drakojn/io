@@ -3,7 +3,6 @@
     "type": "library",
     "version": "0.0.1",
     "description": "Simple Data Mapper library aiming reach any source",
-    "minimum-stability": "stable",
     "license": "mit",
     "autoload":{
         "psr-4":{
