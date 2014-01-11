@@ -1,6 +1,7 @@
 <?php
 namespace Drakojn\Io\Driver;
 
+use ___PHPSTORM_HELPERS\object;
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
 use \Pdo as PHPDataObject;
@@ -45,7 +46,7 @@ class Pdo implements DriverInterface
         }
         $statement->setFetchMode(PHPDataObject::FETCH_CLASS, $map->getLocalName());
         foreach($query as $field => $value){
-            $statement->bindValue($field, $value);
+            $statement->bindValue(':'.$field, $value);
         }
         $ok = $statement->execute();
         return $statement;
@@ -53,11 +54,84 @@ class Pdo implements DriverInterface
 
     public function save(Mapper $mapper, $object)
     {
-        // TODO: Implement save() method.
+        $identifier = $mapper->getMap()->getIdentifier();
+        $data = $object->getDataArray($mapper->getMap());
+        if($data[$identifier]){
+            return $this->update($mapper, $object, $data);
+        }
+        return $this->insert($mapper, $object, $data);
+    }
+
+    protected function insert(Mapper $mapper, $object, array $data)
+    {
+        $map = $mapper->getMap();
+        $properties = $map->getProperties();
+        $identifier = $map->getIdentifier();
+        $remoteIdentifier = $properties[$identifier];
+        unset($properties[$identifier]);
+        $insert = 'INSERT INTO ' . $map->getRemoteName();
+        $columns = '('.implode(', ',$properties).')';
+        $values = 'VALUES (:'.implode(', :',array_keys($properties)).')';
+        $sql = implode(' ', [$insert, $columns, $values]);
+        $statement = $this->resource->prepare($sql);
+        if(!$statement){
+            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
+        }
+        unset($data[$identifier]);
+        foreach($data as $field => $value){
+            $statement->bindValue(':'.$field, $value);
+        }
+        $execution = $statement->execute();
+        if($execution){
+            $id = $this->resource->lastInsertId($remoteIdentifier);
+            $reflection = new \ReflectionProperty(get_class($object), $identifier);
+            $reflection->setAccessible(true);
+            $reflection->setValue($object, $id);
+        }
+        return (bool) $execution;
+    }
+
+    protected function update(Mapper $mapper, $object, array $data)
+    {
+        $map = $mapper->getMap();
+        $properties = $map->getProperties();
+        $identifier = $map->getIdentifier();
+        $remoteIdentifier = $properties[$identifier];
+        unset($properties[$identifier]);
+        $update = 'UPDATE '.$map->getRemoteName();
+        $fields = [];
+        foreach($properties as $value => $field){
+            $fields[] = "{$field} = :{$value}";
+        }
+        $set = 'SET '.implode(', ',$fields);
+        $where = "WHERE {$remoteIdentifier} = :{$identifier}";
+        $sql = implode(' ', [$update, $set, $where]);
+        $statement = $this->resource->prepare($sql);
+        if(!$statement){
+            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
+        }
+        foreach($data as $field => $value){
+            $statement->bindValue(':'.$field, $value);
+        }
+        $execution = $statement->execute();
+        if(!$execution){
+            $object = $this->find($mapper, [$identifier => $data[$identifier]])[0];
+        }
+        return (bool) $execution;
     }
 
     public function delete(Mapper $mapper, $object)
     {
-        // TODO: Implement delete() method.
+        $map = $mapper->getMap();
+        $identifier = $map->getIdentifier();
+        $remoteIdentifier = $map->getProperties()[$identifier];
+        $data = $object->getDataArray($mapper->getMap());
+        $delete = 'DELETE FROM '.$map->getRemoteName();
+        $where = 'WHERE '.$remoteIdentifier.' = :'.$identifier;
+        $sql = "{$delete} {$where}";
+        $statement = $this->resource->prepare($sql);
+        $statement->bindValue(':'.$identifier, $data[$identifier]);
+        $execution = $statement->execute();
+        return $execution;
     }
 }

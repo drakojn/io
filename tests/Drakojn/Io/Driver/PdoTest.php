@@ -2,6 +2,7 @@
 namespace Drakojn\Io\Driver;
 
 use Drakojn\Io\Mapper;
+use Dummy\Data\User;
 use \Pdo as PHPDataObject;
 
 class PdoTest extends \PHPUnit_Framework_TestCase
@@ -18,6 +19,7 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     protected function buildDB()
     {
         $pdo = new PHPDataObject('sqlite::memory:');
+        //$pdo = new PHPDataObject('sqlite:/tmp/db');
         $pdo->query("
             CREATE TABLE IF NOT EXISTS user(
               id_user INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -67,12 +69,14 @@ class PdoTest extends \PHPUnit_Framework_TestCase
 
     public function testFind()
     {
+
         $results = [
             'all' => $this->object->find($this->mapper),
             'byId' => $this->object->find($this->mapper, ['id'=>2]),
             'byName' => $this->object->find($this->mapper, ['name'=>'Beltrano da Silva']),
             'empty' => $this->object->find($this->mapper, ['email'=>'teste@johndoe.com'])
         ];
+        $user = $results['all'][0];
         $this->assertCount(5,$results['all']);
         $this->assertCount(0,$results['empty']);
         $this->assertCount(1,$results['byId']);
@@ -81,15 +85,40 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array',$results['all']);
         $this->assertInternalType('array',$results['byId']);
         $this->assertInternalType('array',$results['empty']);
+        $this->assertObjectNotHasAttribute('password',$user);
     }
 
     public function testSave()
     {
-        $this->markTestIncomplete();
+        $newUser = new User;
+        $newUser->setName('The Doctor');
+        $newUser->setAlias('doctorwho');
+        $newUser->setEmail('the-doctor@tardis.gal');
+        $hashControl = spl_object_hash($newUser);
+        $result = $this->object->save($this->mapper, $newUser);
+        $this->assertInternalType('boolean', $result);
+        $this->assertEquals(true, $result);
+        $this->assertInstanceOf('Dummy\\Data\\User',$newUser);
+        $this->assertNotNull($newUser->getId());
+        $this->assertEquals($hashControl, spl_object_hash($newUser));
+        $newUser->setEmail('the-doctor@tardis.earth');
+        $result = $this->object->save($this->mapper, $newUser);
+        $this->assertInternalType('boolean', $result);
+        $this->assertEquals(true, $result);
+        $this->assertInstanceOf('Dummy\\Data\\User',$newUser);
+        $this->assertEquals('the-doctor@tardis.earth',$newUser->getEmail());
+        $this->assertEquals($hashControl, spl_object_hash($newUser));
     }
 
     public function testDelete()
     {
-        $this->markTestIncomplete();
+        $all = $this->object->find($this->mapper);
+        $ourPick = $all[rand(0,(count($all) - 1))];
+        $ourClone = clone $ourPick;
+        $return = $this->object->delete($this->mapper, $ourPick);
+        $this->assertInternalType('boolean', $return);
+        $this->assertTrue($return);
+        $try = $this->object->find($this->mapper, ['id' => $ourClone->getId()]);
+        $this->assertEmpty($try);
     }
 }
