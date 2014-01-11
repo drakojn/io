@@ -1,13 +1,15 @@
 {
     "name": "drakojn/io",
     "type": "library",
-    "version": "0.0.1",
     "description": "Simple Data Mapper library aiming reach any source",
-    "license": "mit",
+    "license": "MIT",
     "autoload":{
         "psr-4":{
             "Drakojn\\Io\\":"library/"
         }
+    },
+    "require":{
+        "php":">=5.4.0"
     },
     "authors": [
         {

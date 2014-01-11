@@ -82,10 +82,10 @@ class Pdo implements DriverInterface
         }
         $execution = $statement->execute();
         if($execution){
-            $id = $this->resource->lastInsertId($remoteIdentifier);
+            $identity = $this->resource->lastInsertId($remoteIdentifier);
             $reflection = new \ReflectionProperty(get_class($object), $identifier);
             $reflection->setAccessible(true);
-            $reflection->setValue($object, $id);
+            $reflection->setValue($object, $identity);
         }
         return (bool) $execution;
     }

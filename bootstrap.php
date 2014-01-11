@@ -1,13 +1,16 @@
 <?php
 $map = [
-  'Drakojn\\Io\\DriverInterface' => 'library/Drakojn/Io/DriverInterface.php',
-  'Drakojn\\Io\\Mapper'          => 'library/Drakojn/Io/Mapper.php',
-  'Drakojn\\Io\\Mapper\Map'      => 'library/Drakojn/Io/Mapper/Map.php',
-  'Drakojn\\Io\\Driver\Pdo'      => 'library/Drakojn/Io/Driver/Pdo.php',
-  'Drakojn\\Io\\Mapper\MapTest'  => 'tests/Drakojn/Io/Mapper/MapTest.php',
-  'Drakojn\\Io\\Driver\PdoTest'  => 'tests/Drakojn/Io/Driver/PdoTest.php',
-  'Drakojn\\Io\\MapperTest'      => 'tests/Drakojn/Io/MapperTest.php',
-  'Dummy\\Data\\User'            => 'tests/Dummy/Data/User.php'
+  'Drakojn\\Io\\DriverInterface'           => 'library/Drakojn/Io/DriverInterface.php',
+  'Drakojn\\Io\\Mapper'                    => 'library/Drakojn/Io/Mapper.php',
+  'Drakojn\\Io\\Mapper\Map'                => 'library/Drakojn/Io/Mapper/Map.php',
+  'Drakojn\\Io\\Driver\Pdo'                => 'library/Drakojn/Io/Driver/Pdo.php',
+  'Drakojn\\Io\\Driver\File'               => 'library/Drakojn/Io/Driver/File.php',
+  'Drakojn\\Io\\Mapper\MapTest'            => 'tests/Drakojn/Io/Mapper/MapTest.php',
+  'Drakojn\\Io\\Driver\DriverTestAbstract' => 'tests/Drakojn/Io/Driver/DriverTestAbstract.php',
+  'Drakojn\\Io\\Driver\PdoTest'            => 'tests/Drakojn/Io/Driver/PdoTest.php',
+  'Drakojn\\Io\\Driver\FileTest'           => 'tests/Drakojn/Io/Driver/FileTest.php',
+  'Drakojn\\Io\\MapperTest'                => 'tests/Drakojn/Io/MapperTest.php',
+  'Dummy\\Data\\User'                      => 'tests/Dummy/Data/User.php'
 ];
 
 spl_autoload_register(

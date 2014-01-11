@@ -44,7 +44,6 @@ ___________________________________________________________________
  ___________________________________________________________________
 |3           |hagiro       |Augusto...   |augusto.h...|*****      |
 ___________________________________________________________________
-
 ```
 
 You just have to setup a Drakojn\Io\Mapper\Map object this way:
@@ -61,24 +60,20 @@ $map = new Drakojn\Io\Mapper\Map(
         'email' => 'email'
     ] //map between local class and remote presistency part
 );
-
 ```
 
 Set up the communication driver:
 
 ```php
-
 $driver = new Drakojn\Io\Driver\Pdo(
   new \PDO('mysql:host=localhost;dbname=dummy','your-user','your-password')
 );
-
 ```
 
 Create the mapper:
 
 ```php
 $userMapper = new Drakojn\Io\Mapper($driver, $map);
-
 ```
 
 And start to play:
@@ -93,18 +88,30 @@ $klaus->setAlias('klaus');
 $klaus->setName('Klaus Silveira');
 $userMapper->save($klaus);
 $userMapper->delete($someoneIDontLike);
-
 ```
+
+Now imagine that you cannot use a RDBMS and the only way to persist is the filesystem. No Problem.
+You can use another Driver:
+
+```php
+$fileDriver = new Drakojn\Io\Driver\File('/path/to/store/your/objects/');
+$userMapper = new Drakojn\Io\Mapper($fileDriver, $map);
+```
+
+And develop as you were working with RDBMS.
+You (or Drakojn Developer) (or YOU as Drakojn Developer) could do an exchange strategy between many sources.
+
 
 RoadMap:
 ---
-* File Driver
 * IMAP Driver
 * Specialized Pdo Drivers
-* MongoDB Driver
+* Nosql DB Driver
+* RESTful Driver
 
 Changelog:
 ---
+* 0.0.2 - Added FileDriver
 * 0.0.1 - First Release with basic mapping through Pdo
 
 Attention:
