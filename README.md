@@ -1,15 +1,15 @@
 Drakojn
 ===
 
->>> Drakojn is a library suite thought to be simple and effective for web development.
->>> This suite has small libraries to be connected on your current or future project easily.
+> Drakojn is a library suite thought to be simple and effective for web development.
+> This suite has small libraries to be connected on your current or future project easily.
 
 Io
 ==
 
->>> Io is a small tool aimed to abstract persistency simple way. The idea is keep your model/data classes as is,
->>> and provide a simple way to connect them either a relational (or not) database, text files, web protocols and
->>> services and so on
+> Io is a small tool aimed to abstract persistency simple way. The idea is keep your model/data classes as is,
+> and provide a simple way to connect them either a relational (or not) database, text files, web protocols and
+> services and so on
 
 Usage
 ---
