@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/drakojn/io.png?label=ready)](https://waffle.io/drakojn/io)
 Drakojn
 ===
 
