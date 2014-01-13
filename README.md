@@ -80,7 +80,7 @@ And start to play:
 
 ```php
 $allUsers = $userMapper->findAll();
-$myself = $userMapper->findByIndentifier(1);
+$myself = $userMapper->findByIdentifier(1);
 $gaigalas = $userMapper->find(['login'=>'alganet']);
 $someoneIDontLike = $userMapper->find(['name'=>'something bad']);
 $klaus = new User;
