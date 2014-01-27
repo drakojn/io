@@ -7,6 +7,7 @@ use Drakojn\Io\Mapper;
 class File implements DriverInterface
 {
     protected $resource;
+    protected $reflection;
 
     public function __construct($resource)
     {
@@ -17,26 +18,36 @@ class File implements DriverInterface
         throw new \InvalidArgumentException('The argument '.$resource.' isn\'t a directory');
     }
 
-    protected function buildObjectByFile($file, Mapper\Map $map, array $query = [])
+    protected function buildPattern(array $properties = [])
     {
-        //test
-        $file = file_get_contents($file);
-        $properties = $map->getProperties();
         $patternPart = [];
-        ///^.*((id_user=(?<id>.*)\n)|(login=(?<alias>.*)\n)).*$/
         foreach($properties as $local => $remote){
             $patternPart[] = "({$remote}=(?<{$local}>.*))";
         }
-        $pattern = "/.*".implode('|',$patternPart).".*/";
+        return "/.*".implode('|',$patternPart).".*/";
+    }
+
+    protected function getSingleReflection(Mapper\Map $map)
+    {
+        if(!$this->reflection){
+            $this->reflection = new \ReflectionClass($map->getLocalName());
+        }
+        return $this->reflection;
+    }
+
+    protected function buildObjectByFile($file, Mapper\Map $map, array $query = [])
+    {
+        $file = file_get_contents($file);
+        $properties = $map->getProperties();
+        $pattern = $this->buildPattern($properties);
         $matches = [];
-        //test
         preg_match_all($pattern, $file, $matches);
         $matches = array_intersect_key($matches, $properties);
-        $reflection = new \ReflectionClass($map->getLocalName());
+        $reflection = $this->getSingleReflection($map);
         $object = $reflection->newInstanceArgs([]);
         foreach($matches as $propertyName => $value){
             $value = current(array_filter($value,'strlen'));
-            //refactor
+            //TODO: refactor
             if(isset($query[$propertyName]) && $query[$propertyName] != $value){
                 return null;
             }
