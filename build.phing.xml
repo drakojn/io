@@ -13,8 +13,9 @@
     </fileset>
 
     <target name="build"
-            depends="prepare,lint,phploc,pdepend,phpmd,phpcpd,phpunit,phpcs"
-            description="ant building"/>
+            unless="${ant.java.version}"
+            depends="prepare,lint-phing,phploc,pdepend,phpmd,phpcpd,phpunit-phing,phpcs"
+            description="phing building"/>
 
     <target name="clean" description="Clean build artifacts">
         <delete dir="${project.basedir}/build"/>
@@ -25,8 +26,8 @@
         <mkdir dir="${project.basedir}/build/pdepend"/>
     </target>
 
-    <target name="lint" description="Perform syntax check of sourcecode files">
-        <apply executable="php" failonerror="true">
+    <target name="lint-phing" description="Perform syntax check of sourcecode files">
+        <apply executable="php" checkreturn="true">
             <arg value="-l" />
             <fileset refid="library-files"/>
         </apply>
@@ -68,8 +69,8 @@
         </exec>
     </target>
 
-    <target name="phpunit" description="Run unit tests with PHPUnit">
-        <exec executable="phpunit" failonerror="true"/>
+    <target name="phpunit-phing" description="Run unit tests with PHPUnit">
+        <exec executable="phpunit" checkreturn="true"/>
     </target>
 
     <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
