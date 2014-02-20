@@ -1,4 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/drakojn/io.png?label=ready)](https://waffle.io/drakojn/io)
+[![Stories in Ready](https://badge.waffle.io/drakojn/io.png?label=ready)](https://waffle.io/drakojn/io) [![Build Status](https://travis-ci.org/drakojn/io.png)](https://travis-ci.org/drakojn/io)
 Drakojn
 ===
 
