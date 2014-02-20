@@ -111,6 +111,7 @@ RoadMap:
 
 Changelog:
 ---
+* 0.0.3 - Added build files for Ant and Phing - QA
 * 0.0.2 - Added FileDriver
 * 0.0.1 - First Release with basic mapping through Pdo
 
