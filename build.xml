@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="drakojn/io" basedir="." default="version">
+
+    <property name="basedir" value="${project.basedir}"/>
+    <loadfile property="version" srcFile="VERSION"/>
+
+    <target name="version">
+        <echo message="${version}"/>
+    </target>
+
+    <fileset dir="${basedir}/library" id="library-files">
+        <include name="**/*.php" />
+    </fileset>
+
+    <target name="build"
+            depends="prepare,lint,phploc,pdepend,phpmd,phpcpd,phpunit,phpcs"
+            description="ant building"/>
+
+    <target name="clean" description="Clean build artifacts">
+        <delete dir="${project.basedir}/build"/>
+    </target>
+
+    <target name="prepare" depends="clean" description="Prepare for build">
+        <mkdir dir="${project.basedir}/build/logs"/>
+        <mkdir dir="${project.basedir}/build/pdepend"/>
+    </target>
+
+    <target name="lint" description="Perform syntax check of sourcecode files">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+            <fileset refid="library-files"/>
+        </apply>
+    </target>
+
+    <target name="phploc" description="Measure project size using PHPLOC">
+        <exec executable="phploc">
+            <arg value="--log-csv" />
+            <arg value="${project.basedir}/build/logs/phploc.csv" />
+            <arg path="${project.basedir}/library" />
+        </exec>
+    </target>
+
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="pdepend">
+            <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
+            <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
+            <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
+            <arg value="--ignore=${basedir}/tests,${project.basedir}/vendor" />
+            <arg path="${project.basedir}/library" />
+        </exec>
+    </target>
+
+    <target name="phpmd" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+        <exec executable="phpmd">
+            <arg path="${project.basedir}/library" />
+            <arg value="xml" />
+            <arg value="codesize,design,unusedcode,naming" />
+            <arg value="--reportfile" />
+            <arg value="${project.basedir}/build/logs/pmd.xml" />
+        </exec>
+    </target>
+
+    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd" />
+            <arg value="${project.basedir}/build/logs/pmd-cpd.xml" />
+            <arg path="${project.basedir}/library" />
+        </exec>
+    </target>
+
+    <target name="phpunit" description="Run unit tests with PHPUnit">
+        <exec executable="phpunit" failonerror="true"/>
+    </target>
+
+    <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+        <exec executable="phpcs" output="/dev/null">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
+            <arg value="--standard=PSR2" />
+            <arg path="${project.basedir}/library" />
+        </exec>
+    </target>
+</project>
