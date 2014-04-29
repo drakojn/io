@@ -98,6 +98,12 @@ $fileDriver = new Drakojn\Io\Driver\File('/path/to/store/your/objects/');
 $userMapper = new Drakojn\Io\Mapper($fileDriver, $map);
 ```
 
+Or even Google Cloud Storage:
+
+```php
+$gcsDriver = new Drakojn\Io\Driver\File('gs://bucket-name/path/to/store/your/objects/');
+```
+
 And develop as you were working with RDBMS.
 You (or Drakojn Developer) (or YOU as Drakojn Developer) could do an exchange strategy between many sources.
 
@@ -111,6 +117,7 @@ RoadMap:
 
 Changelog:
 ---
+* 0.0.4 - Added simple GS driver - compatibility for Google Cloud Storage
 * 0.0.3 - Added build files for Ant and Phing - QA
 * 0.0.2 - Added FileDriver
 * 0.0.1 - First Release with basic mapping through Pdo
