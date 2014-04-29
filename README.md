@@ -101,7 +101,7 @@ $userMapper = new Drakojn\Io\Mapper($fileDriver, $map);
 Or even Google Cloud Storage:
 
 ```php
-$gcsDriver = new Drakojn\Io\Driver\File('gs://bucket-name/path/to/store/your/objects/');
+$gcsDriver = new Drakojn\Io\Driver\GS('gs://bucket-name/path/to/store/your/objects/');
 ```
 
 And develop as you were working with RDBMS.
