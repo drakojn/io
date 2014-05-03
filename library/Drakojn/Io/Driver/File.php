@@ -4,12 +4,12 @@ namespace Drakojn\Io\Driver;
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
 
-class File implements DriverInterface
+class File extends Stream
 {
     protected $resource;
     protected $reflection;
 
-    public function __construct($resource)
+    public function _____construct($resource)
     {
         if(is_dir((string) $resource)){
             $this->resource = (string) $resource;
@@ -56,19 +56,6 @@ class File implements DriverInterface
             $property->setValue($object, $value);
         }
         return $object;
-    }
-
-
-    public function find(Mapper $mapper, array $query = [])
-    {
-        $map = $mapper->getMap();
-        $pathMap = "{$this->resource}".$map->getRemoteName()."/";
-        $store = [];
-        foreach(glob($pathMap.'*') as $file){
-            $store[] = $this->buildObjectByFile($file, $map, $query);
-        }
-        $result = array_values(array_filter($store));
-        return $result;
     }
 
     public function save(Mapper $mapper, $object)
