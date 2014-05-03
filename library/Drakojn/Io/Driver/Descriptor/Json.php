@@ -3,7 +3,7 @@ namespace Drakojn\Io\Driver\Descriptor;
 
 use Drakojn\Io\Mapper\Map;
 
-class Ini implements DescriptorInterface
+class Json implements DescriptorInterface
 {
     /**
      * Serializes Object
@@ -24,9 +24,9 @@ class Ini implements DescriptorInterface
         $content = [];
         foreach ($data as $localProperty => $value) {
             $value     = serialize($value);
-            $content[] = "{$properties[$localProperty]}=\"{$value}\"";
+            $content[$properties[$localProperty]] = $value;
         }
-        return implode(PHP_EOL, $content);
+        return json_encode((object) $content);
     }
 
     /**
@@ -39,7 +39,7 @@ class Ini implements DescriptorInterface
      */
     public function unserialize(Map $map, $data)
     {
-        $parsed          = parse_ini_string($data);
+        $parsed          = json_decode($data);
         $reflection      = new \ReflectionClass($map->getLocalName());
         $object          = $reflection->newInstance();
         $localProperties = $map->getProperties();

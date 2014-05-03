@@ -2,16 +2,34 @@
 namespace Drakojn\Io\Driver;
 
 use Drakojn\Io\Driver\Descriptor\DescriptorInterface;
-use Drakojn\Io\Driver\Descriptor\Ini;
+use Drakojn\Io\Driver\Descriptor\Ini as Descriptor;
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
 
-class Stream extends AbstractDriver implements DriverInterface
+/**
+ * Class Stream
+ *
+ * @package Drakojn\Io\Driver
+ */
+abstract class Stream implements DriverInterface
 {
+    /**
+     * @var string
+     */
     protected $wrapper;
+    /**
+     * @var
+     */
     protected $context;
+    /**
+     * @var Descriptor\DescriptorInterface
+     */
     protected $descriptor;
 
+    /**
+     * @param mixed               $resource
+     * @param DescriptorInterface $descriptor
+     */
     public function __construct($resource, DescriptorInterface $descriptor = null)
     {
         $this->validateResource($resource);
@@ -21,19 +39,32 @@ class Stream extends AbstractDriver implements DriverInterface
             $this->wrapper = $wrapperCandidate;
         }
         $this->resource   = $resource;
-        $this->descriptor = $this->descriptor ? : new Ini;
+        $this->descriptor = $this->descriptor ? : new Descriptor;
     }
 
-    protected function validateResource($resource)
-    {
-        return file_exists($resource);
-    }
+    /**
+     * @param $resource
+     *
+     * @return bool
+     */
+    abstract protected function validateResource($resource);
 
+    /**
+     * @param $identifier
+     *
+     * @return string
+     */
     protected function buildUri($identifier)
     {
         return realpath("{$this->resource}/{$identifier}");
     }
 
+    /**
+     * @param Mapper\Map $map
+     * @param            $identifier
+     *
+     * @return mixed
+     */
     protected function read(Mapper\Map $map, $identifier)
     {
         $url = $this->buildUri($map->getRemoteName() . '/' . $identifier);
@@ -44,20 +75,42 @@ class Stream extends AbstractDriver implements DriverInterface
         return $this->descriptor->unserialize($map, $data);
     }
 
+    /**
+     * @param Mapper\Map $map
+     * @param            $data
+     *
+     * @return bool
+     */
     protected function write(Mapper\Map $map, $data)
     {
         $reflectionProperty = new \ReflectionProperty($map->getLocalName(), $map->getIdentifier());
         $reflectionProperty->setAccessible(true);
         $identifier = $reflectionProperty->getValue($data);
-        $url        = $this->buildUri($map->getRemoteName() . '/' . $identifier);
-        return (bool)file_put_contents(
-            $url,
+        $uri        = $this->buildUri($map->getRemoteName() . '/' . $identifier);
+        $new        = false;
+        if (!$identifier) {
+            $identifier = spl_object_hash($data);
+            $uri        = $this->buildUri($map->getRemoteName()) . '/' . $identifier;
+            $new        = true;
+        }
+        $result = (bool)file_put_contents(
+            $uri,
             $this->descriptor->serialize($map, $data),
             false,
             $this->context ? : null
         );
+        if ($result && $new) {
+            $reflectionProperty->setValue($data, $identifier);
+        }
+        return $result;
     }
 
+    /**
+     * @param Mapper $mapper
+     * @param array  $query
+     *
+     * @return array
+     */
     public function find(Mapper $mapper, array $query = [])
     {
         $map        = $mapper->getMap();
@@ -83,13 +136,33 @@ class Stream extends AbstractDriver implements DriverInterface
         return array_values($objects);
     }
 
+    /**
+     * @param Mapper $mapper
+     * @param mixed  $object
+     *
+     * @return bool
+     */
     public function save(Mapper $mapper, $object)
     {
-        // TODO: Implement save() method.
+        return $this->write($mapper->getMap(), $object);
     }
 
+    /**
+     * @param Mapper $mapper
+     * @param mixed  $object
+     *
+     * @return bool
+     */
     public function delete(Mapper $mapper, $object)
     {
-        // TODO: Implement delete() method.
+        $map                = $mapper->getMap();
+        $reflectionProperty = new \ReflectionProperty($map->getLocalName(), $map->getIdentifier());
+        $reflectionProperty->setAccessible(true);
+        $identifier = $reflectionProperty->getValue($object);
+        $uri        = $this->buildUri($map->getRemoteName() . '/' . $identifier);
+        if ($this->context) {
+            return unlink($uri, $this->context);
+        }
+        return unlink($uri);
     }
 }

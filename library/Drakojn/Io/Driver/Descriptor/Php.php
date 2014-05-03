@@ -3,13 +3,10 @@ namespace Drakojn\Io\Driver\Descriptor;
 
 use Drakojn\Io\Mapper\Map;
 
-/**
- * Interface DescriptorInterface
- *
- * @package Drakojn\Io\Driver\Descriptor
- */
-interface DescriptorInterface
+class Php implements DescriptorInterface
 {
+    protected static $reflections = [];
+
     /**
      * Serializes Object
      *
@@ -18,7 +15,10 @@ interface DescriptorInterface
      *
      * @return mixed
      */
-    public function serialize(Map $map, $object);
+    public function serialize(Map $map, $object)
+    {
+        return serialize($object);
+    }
 
     /**
      * Unserializes data into an object
@@ -28,5 +28,8 @@ interface DescriptorInterface
      *
      * @return mixed
      */
-    public function unserialize(Map $map, $data);
-} 
+    public function unserialize(Map $map, $data)
+    {
+        return unserialize($data);
+    }
+}
