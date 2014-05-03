@@ -7,6 +7,7 @@ use Drakojn\Io\Mapper\Map;
  * Interface DescriptorInterface
  *
  * @package Drakojn\Io\Driver\Descriptor
+ * @todo: tests
  */
 interface DescriptorInterface
 {

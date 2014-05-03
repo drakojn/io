@@ -50,6 +50,22 @@ abstract class Stream implements DriverInterface
     abstract protected function validateResource($resource);
 
     /**
+     * @param Descriptor\DescriptorInterface $descriptor The Descriptor
+     */
+    public function setDescriptor($descriptor)
+    {
+        $this->descriptor = $descriptor;
+    }
+
+    /**
+     * @return \Drakojn\Io\Driver\Descriptor\DescriptorInterface
+     */
+    public function getDescriptor()
+    {
+        return $this->descriptor;
+    }
+
+    /**
      * @param $identifier
      *
      * @return string

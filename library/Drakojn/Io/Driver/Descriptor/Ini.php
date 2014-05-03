@@ -3,7 +3,7 @@ namespace Drakojn\Io\Driver\Descriptor;
 
 use Drakojn\Io\Mapper\Map;
 
-class Ini implements DescriptorInterface
+class Ini extends AbstractDescriptor
 {
     /**
      * Serializes Object
@@ -16,15 +16,11 @@ class Ini implements DescriptorInterface
     public function serialize(Map $map, $object)
     {
         $properties = $map->getProperties();
-        $identifier = $map->getIdentifier();
-        $data       = $map->getData($object);
-        if (!isset($data[$identifier]) || !$data[$identifier]) {
-            $data[$identifier] = spl_object_hash($object);
-        }
+        $data = $this->prepareData($map, $object);
         $content = [];
         foreach ($data as $localProperty => $value) {
             $value     = serialize($value);
-            $content[] = "{$properties[$localProperty]}=\"{$value}\"";
+            $content[] = "{$properties[$localProperty]}='{$value}'";
         }
         return implode(PHP_EOL, $content);
     }
@@ -40,18 +36,7 @@ class Ini implements DescriptorInterface
     public function unserialize(Map $map, $data)
     {
         $parsed          = parse_ini_string($data);
-        $reflection      = new \ReflectionClass($map->getLocalName());
-        $object          = $reflection->newInstance();
-        $localProperties = $map->getProperties();
-        foreach ($localProperties as $localProperty => $remoteProperty) {
-            $value = unserialize($parsed[$remoteProperty]);
-            if (isset($query[$localProperty]) && $query[$localProperty] != $value) {
-                return null;
-            }
-            $reflectedProperty = $reflection->getProperty($localProperty);
-            $reflectedProperty->setAccessible(true);
-            $reflectedProperty->setValue($object, $value);
-        }
+        $object = $this->injectDataIntoObject($map, $parsed);
         return $object;
     }
 }
