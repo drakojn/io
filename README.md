@@ -98,6 +98,15 @@ $fileDriver = new Drakojn\Io\Driver\File('/path/to/store/your/objects/');
 $userMapper = new Drakojn\Io\Mapper($fileDriver, $map);
 ```
 
+Or if you want a json based file:
+
+```php
+$descriptor = new Drakojn\Io\Driver\Descriptor\Json;
+$fileDriver = new Drakojn\Io\Driver\File('/path/to/store/your/objects/', $descriptor);
+// or even a php serialized file:
+$fileDriver->setDescriptor(new Drakojn\Io\Driver\Descriptor\Php);
+```
+
 And develop as you were working with RDBMS.
 You (or Drakojn Developer) (or YOU as Drakojn Developer) could do an exchange strategy between many sources.
 
@@ -111,6 +120,7 @@ RoadMap:
 
 Changelog:
 ---
+* 0.1.0 - Moved *File* to a Stream family, among new GS driver, added descriptors for stream formatting
 * 0.0.3 - Added build files for Ant and Phing - QA
 * 0.0.2 - Added FileDriver
 * 0.0.1 - First Release with basic mapping through Pdo
