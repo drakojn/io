@@ -1,8 +1,6 @@
 <?php
 namespace Drakojn\Io\Mapper;
 
-use Psr\Log\InvalidArgumentException;
-
 class Map
 {
     protected $localName;

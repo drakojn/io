@@ -1,7 +1,7 @@
 <?php
 namespace Drakojn\Io\Driver;
 
-class File extends Stream
+class GCS extends Stream
 {
     /**
      * @param $resource
@@ -10,6 +10,8 @@ class File extends Stream
      */
     protected function validateResource($resource)
     {
-        return file_exists($resource);
+        if (strpos($resource, 'gs://') === 0) {
+            return true;
+        }
     }
 }
