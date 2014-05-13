@@ -176,6 +176,9 @@ abstract class Stream implements DriverInterface
         $reflectionProperty->setAccessible(true);
         $identifier = $reflectionProperty->getValue($object);
         $uri        = $this->buildUri($map->getRemoteName() . '/' . $identifier);
+        if (!file_exists($uri)) {
+            return true;
+        }
         if ($this->context) {
             return unlink($uri, $this->context);
         }

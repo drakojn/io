@@ -96,6 +96,6 @@ abstract class DriverTestAbstract extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('boolean', $return);
         $this->assertTrue($return);
         $try = $this->object->find($this->mapper, ['id' => $ourClone->getId()]);
-        $this->assertEmpty($try);
+        $this->assertCount(0, $try);
     }
 }
