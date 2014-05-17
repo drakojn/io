@@ -10,8 +10,11 @@ class GCS extends Stream
      */
     protected function validateResource($resource)
     {
-        if (strpos($resource, 'gs://') === 0) {
-            return true;
-        }
+        return (in_array('gs',stream_get_wrappers()) && strpos($resource, 'gs://') === 0);
+    }
+
+    protected function buildUri($identifier)
+    {
+        return "{$this->resource}{$identifier}";
     }
 }
