@@ -46,15 +46,9 @@ class Mapper
         return $this->map;
     }
 
-    
     public function find(array $query = [])
     {
         return $this->driver->find($this, $query);
-    }
-
-    public function findAll()
-    {
-        return $this->driver->find($this, []);
     }
 
     public function findByIdentifier($identifierQuery)

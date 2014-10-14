@@ -175,7 +175,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete()
     {
-        $all = $this->object->findAll();
+        $all = $this->object->find([]);
         $ourPick = $all[rand(0,(count($all) - 1))];
         $ourClone = clone $ourPick;
         $return = $this->object->delete($ourPick);

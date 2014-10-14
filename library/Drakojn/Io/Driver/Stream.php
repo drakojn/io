@@ -17,10 +17,12 @@ abstract class Stream implements DriverInterface
      * @var string
      */
     protected $wrapper;
+    
     /**
      * @var
      */
     protected $context;
+    
     /**
      * @var Descriptor\DescriptorInterface
      */
