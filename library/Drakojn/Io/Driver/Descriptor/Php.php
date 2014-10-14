@@ -15,8 +15,8 @@ class Php implements DescriptorInterface
     /**
      * Serializes Object
      *
-     * @param Map   $map    the object structure map
-     * @param mixed $object candidate to serialize
+     * @param Map    $map    the object structure map
+     * @param object $object candidate to serialize
      *
      * @return mixed
      */
