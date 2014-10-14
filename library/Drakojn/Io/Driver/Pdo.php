@@ -3,15 +3,19 @@ namespace Drakojn\Io\Driver;
 
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
-use \Pdo as PHPDataObject;
+use \PDO as PHPDataObject;
 
 class Pdo implements DriverInterface
 {
-    protected $resource;
+    /**
+     *
+     * @var \PHPDataObject
+     */
+    protected $pdo;
 
-    public function __construct(PHPDataObject $resource)
+    public function __construct(PHPDataObject $pdo)
     {
-        $this->resource = $resource;
+        $this->pdo = $pdo;
     }
 
     public function find(Mapper $mapper, array $query = [])
@@ -39,7 +43,7 @@ class Pdo implements DriverInterface
             $where = 'WHERE '.implode(' AND ', $whereParameters);
         }
         $sql = implode(' ',[$select, $from, $where]);
-        $statement = $this->resource->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
         if(!$statement){
             throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
         }
@@ -72,7 +76,7 @@ class Pdo implements DriverInterface
         $columns = '('.implode(', ',$properties).')';
         $values = 'VALUES (:'.implode(', :',array_keys($properties)).')';
         $sql = implode(' ', [$insert, $columns, $values]);
-        $statement = $this->resource->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
         if(!$statement){
             throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
         }
@@ -82,7 +86,7 @@ class Pdo implements DriverInterface
         }
         $execution = $statement->execute();
         if($execution){
-            $identity = $this->resource->lastInsertId($remoteIdentifier);
+            $identity = $this->pdo->lastInsertId($remoteIdentifier);
             $reflection = new \ReflectionProperty(get_class($object), $identifier);
             $reflection->setAccessible(true);
             $reflection->setValue($object, $identity);
@@ -105,7 +109,7 @@ class Pdo implements DriverInterface
         $set = 'SET '.implode(', ',$fields);
         $where = "WHERE {$remoteIdentifier} = :{$identifier}";
         $sql = implode(' ', [$update, $set, $where]);
-        $statement = $this->resource->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
         if(!$statement){
             throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
         }
@@ -128,7 +132,7 @@ class Pdo implements DriverInterface
         $delete = 'DELETE FROM '.$map->getRemoteName();
         $where = 'WHERE '.$remoteIdentifier.' = :'.$identifier;
         $sql = "{$delete} {$where}";
-        $statement = $this->resource->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':'.$identifier, $data[$identifier]);
         $execution = $statement->execute();
         return $execution;
