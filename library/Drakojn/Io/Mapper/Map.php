@@ -6,7 +6,7 @@ class Map
     protected $localName;
     protected $remoteName;
     protected $identifier;
-    protected $properties = [];
+    protected $properties;
 
     function __construct($localName, $remoteName, $identifier,  array $properties = [])
     {
