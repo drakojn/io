@@ -119,6 +119,11 @@ class Map
      */
     public function validateObject($object)
     {
+        if (! is_object($object)) {
+            throw new InvalidArgumentException(
+                '$object argument is not a object'
+            );
+        }
         return ($object instanceof $this->localName);
     }
 }

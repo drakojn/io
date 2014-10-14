@@ -1,17 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: duodraco
- * Date: 1/10/14
- * Time: 1:44 PM
- */
 
 namespace Drakojn\Io\Mapper;
 
 
 use Dummy\Data\User;
 
-class MapTest extends \PHPUnit_Framework_TestCase {
+class MapTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var Map
      */
@@ -118,7 +113,7 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('array',$this->object->getData($object));
         $this->assertSame($data, $this->object->getData($object));
     }
-
+    
     public function testValidateObject()
     {
         $obj1 = new User;
@@ -127,5 +122,14 @@ class MapTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->object->validateObject($obj1));
         $this->assertFalse($this->object->validateObject($obj2));
     }
+    
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage $object argument is not a object
+     */
+    public function testValidateObjectWithAWrongType()
+    {
+        $wrongType = ['wrong' => 'type'];
+        $this->object->validateObject($wrongType);
+    }
 }
- 
