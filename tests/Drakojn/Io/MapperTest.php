@@ -123,7 +123,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Drakojn\Io\Mapper::findAll
+     * @covers Drakojn\Io\Mapper::find
      */
     public function testFindAll()
     {
