@@ -1,15 +1,17 @@
 <?php
 namespace Drakojn\Io\Driver;
 
+use Drakojn\Io\Driver\SQL\Update;
 use Drakojn\Io\DriverInterface;
 use Drakojn\Io\Mapper;
+use ErrorException;
 use \PDO as PHPDataObject;
 
 class Pdo implements DriverInterface
 {
     /**
      *
-     * @var \PHPDataObject
+     * @var PHPDataObject
      */
     protected $pdo;
 
@@ -45,13 +47,14 @@ class Pdo implements DriverInterface
         $sql = implode(' ',[$select, $from, $where]);
         $statement = $this->pdo->prepare($sql);
         if(!$statement){
-            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
+            throw new ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
         }
         $statement->setFetchMode(PHPDataObject::FETCH_CLASS, $map->getLocalName());
         foreach($query as $field => $value){
             $statement->bindValue(':'.$field, $value);
         }
-        $ok = $statement->execute();
+        $statement->execute();
+
         return $statement;
     }
 
@@ -78,7 +81,7 @@ class Pdo implements DriverInterface
         $sql = implode(' ', [$insert, $columns, $values]);
         $statement = $this->pdo->prepare($sql);
         if(!$statement){
-            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
+            throw new ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
         }
         unset($data[$identifier]);
         foreach($data as $field => $value){
@@ -94,33 +97,35 @@ class Pdo implements DriverInterface
         return (bool) $execution;
     }
 
-    protected function update(Mapper $mapper, $object, array $data)
+    protected function update(Mapper $mapper, array $data)
     {
-        $map = $mapper->getMap();
+        $map        = $mapper->getMap();
         $properties = $map->getProperties();
         $identifier = $map->getIdentifier();
+
         $remoteIdentifier = $properties[$identifier];
+
         unset($properties[$identifier]);
-        $update = 'UPDATE '.$map->getRemoteName();
-        $fields = [];
-        foreach($properties as $value => $field){
-            $fields[] = "{$field} = :{$value}";
+
+        $update = new Update(
+            $map->getRemoteName(),
+            $properties,
+            "{$remoteIdentifier} = :{$identifier}"
+        );
+
+        $statement = $this->pdo->prepare($update->getQuery());
+
+        if (! $statement) {
+            throw new ErrorException(
+                sprintf('A SQL hasn\'t been generated: [%s]', $update->getQuery())
+            );
         }
-        $set = 'SET '.implode(', ',$fields);
-        $where = "WHERE {$remoteIdentifier} = :{$identifier}";
-        $sql = implode(' ', [$update, $set, $where]);
-        $statement = $this->pdo->prepare($sql);
-        if(!$statement){
-            throw new \ErrorException('A SQL hasn\'t been generated: ['.$sql.']');
-        }
+
         foreach($data as $field => $value){
             $statement->bindValue(':'.$field, $value);
         }
-        $execution = $statement->execute();
-        if(!$execution){
-            $object = $this->find($mapper, [$identifier => $data[$identifier]])[0];
-        }
-        return (bool) $execution;
+
+        return (bool) $statement->execute();
     }
 
     public function delete(Mapper $mapper, $object)
