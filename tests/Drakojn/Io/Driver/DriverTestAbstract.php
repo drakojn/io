@@ -45,7 +45,7 @@ abstract class DriverTestAbstract extends \PHPUnit_Framework_TestCase
         return $mapper;
     }
 
-    public function testFind()
+    public function testFind($descriptor)
     {
         $results = [
             'all'    => $this->object->find($this->mapper),
