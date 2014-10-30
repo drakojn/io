@@ -1,47 +1,56 @@
 <?php
+
 namespace Drakojn\Io\Driver\SQL;
 
+use PDO;
+use \Drakojn\Io\Mapper;
+
 /**
- * Create Update statement.
+ * Update SQL.
  *
  * @author Jefersson Nathan <malukenho@phpse.net>
  */
-class Update
+class Update implements Action
 {
-    /**
-     * Store sql query as a plain text
-     *
-     * @var string
-     */
-    private $sql;
-
     /**
      * @param string  $table      Table name
      * @param array   $data       Column and value as key and value of array
      * @param         $condition  Condition for update statement
      */
-    public function __construct($table, array $data, $condition)
+    public function __construct(PDO $pdo, Mapper $mapper, array $data, $condition)
     {
-        $update = 'UPDATE ' . $table;
+        $map = $mapper->getMap();
+        $properties = $map->getProperties();
+        $identifier = $map->getIdentifier();
+
+        $remoteIdentifier = $properties[$identifier];
+
+        unset($properties[$identifier]);
+
+        $update = 'UPDATE ' . $mapper->getDriver();
+
         $fields = [];
-        foreach($data as $value => $field){
+        foreach ($properties as $value => $field) {
             $fields[] = "{$field} = :{$value}";
         }
-        $set   = 'SET '.implode(', ',$fields);
-        $where = "WHERE {$condition}";
 
-        $this->sql = implode(' ', [$update, $set, $where]);
+        $set = 'SET ' . implode(', ', $fields);
+        $where = "WHERE {$remoteIdentifier} = :{$identifier}";
 
-        return $this;
-    }
+        $sql = implode(' ', [$update, $set, $where]);
 
-    /**
-     * Sql query as text.
-     *
-     * @return string
-     */
-    public function getQuery()
-    {
-        return $this->sql;
+        $statement = $pdo->prepare($sql);
+
+        if (!$statement) {
+            throw new ErrorException(
+            sprintf('A SQL hasn\'t been generated: [%s]', $sql)
+            );
+        }
+
+        foreach ($data as $field => $value) {
+            $statement->bindValue(':' . $field, $value);
+        }
+
+        return (bool) $statement->execute();
     }
 }
