@@ -31,7 +31,7 @@ class Pdo implements DriverInterface
     public function find(Mapper $mapper, array $query = [])
     {
         $iterator = new Select($this->pdo, $mapper, $query);
-        return $iterator->fetchAll();
+        return $iterator->getStatement()->fetchAll();
     }
 
     public function save(Mapper $mapper, $object)
