@@ -14,12 +14,12 @@ class Delete implements Action
 {
     /**
      * Delete action.
-     * 
+     *
      * @param PDO                $pdo
      * @param \Drakojn\Io\Mapper $mapper
      * @param Object             $object
-     * 
-     * @return PDOStatement
+     *
+     * @return \Drakojn\Io\Driver\SQL\Delete
      */
     public function __construct(PDO $pdo, Mapper $mapper, $object)
     {
