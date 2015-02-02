@@ -6,9 +6,24 @@ use Drakojn\Io\DriverInterface as Driver;
 
 class Mapper
 {
+    /**
+     *
+     * @var Driver
+     */
     protected $driver;
+    
+    /**
+     *
+     * @var Map 
+     */
     protected $map;
 
+    /**
+     * Constructor.
+     * 
+     * @param \Drakojn\Io\DriverInterface $driver
+     * @param \Drakojn\Io\Mapper\Map $map
+     */
     public function __construct(Driver $driver, Map $map)
     {
         $this->driver = $driver;
@@ -16,7 +31,7 @@ class Mapper
     }
 
     /**
-     * @return mixed
+     * @return Driver
      */
     public function getDriver()
     {
@@ -34,11 +49,6 @@ class Mapper
     public function find(array $query = [])
     {
         return $this->driver->find($this, $query);
-    }
-
-    public function findAll()
-    {
-        return $this->driver->find($this, []);
     }
 
     public function findByIdentifier($identifierQuery)

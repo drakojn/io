@@ -21,8 +21,8 @@ abstract class AbstractDescriptor implements DescriptorInterface
     /**
      * Serializes Object
      *
-     * @param Map   $map    the object structure map
-     * @param mixed $object candidate to serialize
+     * @param Map    $map    the object structure map
+     * @param object $object candidate to serialize
      *
      * @return mixed
      */
@@ -34,7 +34,7 @@ abstract class AbstractDescriptor implements DescriptorInterface
      * @param Map    $map  the object structure map
      * @param string $data serialized data
      *
-     * @return mixed
+     * @return object
      */
     abstract public function unserialize(Map $map, $data);
 

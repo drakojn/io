@@ -1,12 +1,15 @@
 <?php
 namespace Drakojn\Io\Mapper;
 
+use InvalidArgumentException;
+use ReflectionObject;
+
 class Map
 {
     protected $localName;
     protected $remoteName;
     protected $identifier;
-    protected $properties = [];
+    protected $properties;
 
     function __construct($localName, $remoteName, $identifier,  array $properties = [])
     {
@@ -90,16 +93,16 @@ class Map
      * Extract values from a given object
      * @param object $object
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getData($object)
     {
         if(!$this->validateObject($object)){
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "Given object isn\'t instance of {$this->localName}"
             );
         }
-        $reflection = new \ReflectionObject($object);
+        $reflection = new ReflectionObject($object);
         $data = [];
         foreach(array_keys($this->properties) as $localProperty){
             $property = $reflection->getProperty($localProperty);
@@ -116,6 +119,11 @@ class Map
      */
     public function validateObject($object)
     {
-        return is_a($object, $this->localName);
+        if (! is_object($object)) {
+            throw new InvalidArgumentException(
+                '$object argument is not a object'
+            );
+        }
+        return ($object instanceof $this->localName);
     }
 }

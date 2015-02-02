@@ -3,3 +3,5 @@ build/
 .idea
 cache.properties
 composer.lock
+/nbproject/private/
+phpunit.xml
