@@ -17,10 +17,12 @@ abstract class Stream implements DriverInterface
      * @var string
      */
     protected $wrapper;
+    
     /**
      * @var
      */
     protected $context;
+    
     /**
      * @var Descriptor\DescriptorInterface
      */
@@ -102,13 +104,12 @@ abstract class Stream implements DriverInterface
         $reflectionProperty = new \ReflectionProperty($map->getLocalName(), $map->getIdentifier());
         $reflectionProperty->setAccessible(true);
         $identifier = $reflectionProperty->getValue($data);
-        $uri        = $this->buildUri($map->getRemoteName() . '/' . $identifier);
         $new        = false;
         if (!$identifier) {
             $identifier = spl_object_hash($data);
-            $uri        = $this->buildUri($map->getRemoteName()) . '/' . $identifier;
             $new        = true;
         }
+        $uri        = $this->buildUri($map->getRemoteName()) . '/' . $identifier;
         $result = (bool)file_put_contents(
             $uri,
             $this->descriptor->serialize($map, $data),
@@ -130,7 +131,7 @@ abstract class Stream implements DriverInterface
     public function find(Mapper $mapper, array $query = [])
     {
         $map        = $mapper->getMap();
-        $pathMap    = realpath($this->buildUri($map->getRemoteName()));
+        $pathMap    = $this->buildUri($map->getRemoteName());
         $pathHandle = opendir($pathMap);
         $objects    = [];
         while (false !== ($file = readdir($pathHandle))) {

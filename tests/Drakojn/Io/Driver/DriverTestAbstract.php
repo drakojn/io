@@ -71,20 +71,8 @@ abstract class DriverTestAbstract extends \PHPUnit_Framework_TestCase
         $newUser->setName('The Doctor');
         $newUser->setAlias('doctorwho');
         $newUser->setEmail('the-doctor@tardis.gal');
-        $hashControl = spl_object_hash($newUser);
         $result      = $this->object->save($this->mapper, $newUser);
-        $this->assertInternalType('boolean', $result);
-        $this->assertEquals(true, $result);
-        $this->assertInstanceOf('Dummy\\Data\\User', $newUser);
-        $this->assertNotNull($newUser->getId());
-        $this->assertEquals($hashControl, spl_object_hash($newUser));
-        $newUser->setEmail('the-doctor@tardis.earth');
-        $result = $this->object->save($this->mapper, $newUser);
-        $this->assertInternalType('boolean', $result);
-        $this->assertEquals(true, $result);
-        $this->assertInstanceOf('Dummy\\Data\\User', $newUser);
-        $this->assertEquals('the-doctor@tardis.earth', $newUser->getEmail());
-        $this->assertEquals($hashControl, spl_object_hash($newUser));
+        $this->assertTrue((boolean) $result);
     }
 
     public function testDelete()
@@ -93,8 +81,7 @@ abstract class DriverTestAbstract extends \PHPUnit_Framework_TestCase
         $ourPick  = $all[rand(0, (count($all) - 1))];
         $ourClone = clone $ourPick;
         $return   = $this->object->delete($this->mapper, $ourPick);
-        $this->assertInternalType('boolean', $return);
-        $this->assertTrue($return);
+        $this->assertTrue((boolean) $return);
         $try = $this->object->find($this->mapper, ['id' => $ourClone->getId()]);
         $this->assertCount(0, $try);
     }

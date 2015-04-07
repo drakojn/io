@@ -30,4 +30,4 @@ interface DescriptorInterface
      * @return mixed
      */
     public function unserialize(Map $map, $data);
-} 
+}

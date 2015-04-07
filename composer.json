@@ -11,6 +11,10 @@
     "require":{
         "php":">=5.4.0"
     },
+    "require-dev":{
+        "phpunit/phpunit":"4@stable",
+        "squizlabs/php_codesniffer": "~1.5.4"
+    },
     "authors": [
         {
             "name": "Anderson 'Duodraco' Casimiro",
@@ -19,6 +23,10 @@
         {
             "name": "Klaus Silveira",
             "email": "klaussilveira@gmail.com"
+        },
+        {
+            "name": "Jefersson Nathan",
+            "email": "malukenho@phpse.net"
         }
     ]
 }
