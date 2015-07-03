@@ -79,7 +79,7 @@ $userMapper = new Drakojn\Io\Mapper($driver, $map);
 And start to play:
 
 ```php
-$allUsers = $userMapper->findAll();
+$allUsers = $userMapper->find();// gets all "records"
 $myself = $userMapper->findByIdentifier(1);
 $gaigalas = $userMapper->find(['login'=>'alganet']);
 $someoneIDontLike = $userMapper->find(['name'=>'something bad']);
@@ -120,6 +120,8 @@ RoadMap:
 
 Changelog:
 ---
+* 0.2.1 - fixes for update and select - breaks when looking for remote keys instead local ones
+* 0.2.0 - Changed family structure for Pdo driver
 * 0.1.0 - Moved *File* to a Stream family, among new GS driver, added descriptors for stream formatting
 * 0.0.3 - Added build files for Ant and Phing - QA
 * 0.0.2 - Added FileDriver

@@ -1,7 +1,7 @@
 <?php
-
 namespace Drakojn\Io\Driver\SQL;
 
+use ErrorException;
 use PDO;
 use \Drakojn\Io\Mapper;
 
@@ -13,44 +13,53 @@ use \Drakojn\Io\Mapper;
 class Update implements Action
 {
     /**
-     * @param string  $table      Table name
-     * @param array   $data       Column and value as key and value of array
-     * @param         $condition  Condition for update statement
+     * Pdo Statement
+     *
+     * @var \PDOStatement
      */
-    public function __construct(PDO $pdo, Mapper $mapper, array $data, $condition)
+    protected $statement;
+
+    /**
+     * Update's constructor
+     *
+     * @param PDO    $pdo    a Pdo instance
+     * @param Mapper $mapper a Mapper instance
+     * @param array  $data   data to persisted
+     *
+     * @throws ErrorException
+     */
+    public function __construct(PDO $pdo, Mapper $mapper, array $data)
     {
-        $map = $mapper->getMap();
+        $map        = $mapper->getMap();
         $properties = $map->getProperties();
         $identifier = $map->getIdentifier();
-
         $remoteIdentifier = $properties[$identifier];
-
         unset($properties[$identifier]);
-
-        $update = 'UPDATE ' . $mapper->getDriver();
-
+        $update = 'UPDATE ' . $map->getRemoteName();
         $fields = [];
         foreach ($properties as $value => $field) {
             $fields[] = "{$field} = :{$value}";
         }
-
-        $set = 'SET ' . implode(', ', $fields);
+        $set   = 'SET ' . implode(', ', $fields);
         $where = "WHERE {$remoteIdentifier} = :{$identifier}";
-
         $sql = implode(' ', [$update, $set, $where]);
-
-        $statement = $pdo->prepare($sql);
-
-        if (!$statement) {
+        $this->statement = $pdo->prepare($sql);
+        if (!$this->statement) {
             throw new ErrorException(
-            sprintf('A SQL hasn\'t been generated: [%s]', $sql)
+                sprintf('A SQL hasn\'t been generated: [%s]', $sql)
             );
         }
-
         foreach ($data as $field => $value) {
-            $statement->bindValue(':' . $field, $value);
+            $this->statement->bindValue(':' . $field, $value);
         }
+    }
 
-        return (bool) $statement->execute();
+    /**
+     * Executes the statement
+     * @return bool
+     */
+    public function __invoke()
+    {
+        return (bool)$this->statement->execute();
     }
 }
