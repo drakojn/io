@@ -1,5 +1,4 @@
 <?php
-
 namespace Drakojn\Io\Driver\SQL;
 
 use PDO;
@@ -12,6 +11,8 @@ use Drakojn\Io\Mapper;
  */
 class Delete implements Action
 {
+    protected $statement;
+
     /**
      * Delete action.
      *
@@ -26,18 +27,16 @@ class Delete implements Action
         $map              = $mapper->getMap();
         $identifier       = $map->getIdentifier();
         $remoteIdentifier = $map->getProperties()[$identifier];
-        
-        $data   = $map->getData($object);
-        
-        $delete    = 'DELETE FROM ' . $map->getRemoteName();
-        $where     = 'WHERE ' . $remoteIdentifier . ' = :' . $identifier;
-        $this->sql = "{$delete} {$where}";
-        
-        $statement = $pdo->prepare($this->sql);
-        $statement->bindValue(':' . $identifier, $data[$identifier]);
-        
-        $execution = $statement->execute();
-        
-        return $execution;
+        $data             = $map->getData($object);
+        $delete           = 'DELETE FROM ' . $map->getRemoteName();
+        $where            = 'WHERE ' . $remoteIdentifier . ' = :' . $identifier;
+        $this->sql        = "{$delete} {$where}";
+        $this->statement  = $pdo->prepare($this->sql);
+        $this->statement->bindValue(':' . $identifier, $data[$identifier]);
+    }
+
+    public function __invoke()
+    {
+        return $this->statement->execute();
     }
 }

@@ -11,12 +11,18 @@ class Map
     protected $identifier;
     protected $properties;
 
-    function __construct($localName, $remoteName, $identifier,  array $properties = [])
+    /**
+     * @param string $localName
+     * @param string $remoteName
+     * @param string $identifier
+     * @param array  $properties
+     */
+    function __construct($localName, $remoteName, $identifier, array $properties = [])
     {
         $this->localName  = $localName;
         $this->remoteName = $remoteName;
         $this->identifier = $identifier;
-        foreach($properties as $localProperty => $remoteProperty){
+        foreach ($properties as $localProperty => $remoteProperty) {
             $this->addProperty($localProperty, $remoteProperty);
         }
     }
@@ -60,7 +66,7 @@ class Map
     {
         $this->identifier = $identifier;
     }
-    
+
     /**
      * @return string
      */
@@ -91,20 +97,22 @@ class Map
 
     /**
      * Extract values from a given object
+     *
      * @param object $object
+     *
      * @return array
      * @throws InvalidArgumentException
      */
     public function getData($object)
     {
-        if(!$this->validateObject($object)){
+        if (!$this->validateObject($object)) {
             throw new InvalidArgumentException(
-                "Given object isn\'t instance of {$this->localName}"
+                "Given object isn't instance of {$this->localName}"
             );
         }
         $reflection = new ReflectionObject($object);
-        $data = [];
-        foreach(array_keys($this->properties) as $localProperty){
+        $data       = [];
+        foreach (array_keys($this->properties) as $localProperty) {
             $property = $reflection->getProperty($localProperty);
             $property->setAccessible(true);
             $data[$localProperty] = $property->getValue($object);
@@ -114,12 +122,15 @@ class Map
 
     /**
      * Checks if given object is an instance of Map's set
+     *
      * @param object $object
+     *
      * @return bool
+     * @throws InvalidArgumentException
      */
     public function validateObject($object)
     {
-        if (! is_object($object)) {
+        if (!is_object($object)) {
             throw new InvalidArgumentException(
                 '$object argument is not a object'
             );
